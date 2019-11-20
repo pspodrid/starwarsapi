@@ -1,13 +1,31 @@
-import {Placeholder} from './back.js';
 import $ from 'jquery';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 
+$(document).ready(function() {
+  $('#heroInfo').click(function() {
+    const hero = $('#hero').val();
+    $('#hero').val("");
+    console.log(hero);
 
-$(document).ready(function(){
-  $('form').submit(function(event){
-    event.preventDefault();
+    let request = new XMLHttpRequest();
+    // const url = `http://www.omdbapi.com/?t=${hero}&apikey=61c95e4f`;
+    const url = `https://swapi.co/api/people/?search=${hero}`;
 
+    request.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        const response = JSON.parse(this.responseText);
+        console.log(response);
+        getElements(response);
+      }
+    };
+
+    request.open("GET", url, true);
+    request.send();
+
+    const getElements = function(response) {
+      $('.name').text(`The hero is ${response.results[0].name}`);
+      $('.height').text(`The hero height ${response.results[0].height} '`);
+      $('.mass').text(`The hero mass ${response.results[0].mass}`);
+    };
   });
 });
